@@ -1,17 +1,55 @@
 //
-//  ContentView.swift
-//  ImageClassifier
+//  ContentViewModel.swift
+//  Font_Similarity
 //
-//  Created by Валерия Огородникова on 01.10.2020.
+//  Created by Валерия Огородникова on 02.10.2020.
 //
 
-import SwiftUI
+import Foundation
+import UIKit
 import Vision
 
-struct ContentView: View {
-    @ObservedObject var viewModel = ContentViewModel()
+class ContentViewModel: ObservableObject {
+    @Published var sourceImage: UIImage?
+    @Published var sourceName: String?
+    @Published var modelData: [ModelData] = []
+    
+    private let fileName = "fontsSimilarity"
+    var jsonModel = DomainJson()
+    
+    init() {
+        self.getFontImages()
+    }
+    
+    func setSource(modelData: [ModelData]) {
+        let item = modelData.first
+        self.sourceImage = item!.image
+        self.sourceName = item!.imageName
+    }
+    
+    func saveModelData(modelData: [ModelData]) {
+        self.modelData = modelData
         
-    func getImages() {
+        self.jsonModel.data[self.sourceName!] = modelData.map({ (item) -> CustomFontModel in
+            return CustomFontModel(name: item.imageName)
+        })
+        
+        do {
+            let _ = try JSONSerialization.save(jsonObject: self.jsonModel, toFilename: self.fileName)
+        } catch {
+            print("failed to save")
+        }
+    }
+    
+    func loadDataFromFile() {
+        do {
+            self.jsonModel = try JSONSerialization.loadJSON(withFilename: self.fileName)!
+        } catch {
+            print("failed to save")
+        }
+    }
+    
+    func getFontImages() {
         let fm = FileManager.default
         let path = Bundle.main.resourcePath!
         let items = try! fm.contentsOfDirectory(atPath: path + "/fonts")
@@ -19,61 +57,22 @@ struct ContentView: View {
         
         for (index, image) in test2.enumerated() {
             let imageURL = URL(fileURLWithPath: path + "/fonts").appendingPathComponent(test2[index])
-            self.viewModel.modelData.append(ModelData(id: index, image: UIImage(contentsOfFile: imageURL.path)!, imageName: image))
+            self.modelData.append(ModelData(id: index, image: UIImage(contentsOfFile: imageURL.path)!, imageName: image))
         }
         
-        self.viewModel.setSource(modelData: self.viewModel.modelData)
+        self.setSource(modelData: self.modelData)
     }
-    
-    var body: some View {
-        NavigationView{
-            VStack() {
-                if self.viewModel.modelData.count > 0 {
-                    HStack {
-                        Text(self.viewModel.sourceName!)
-                        Image(uiImage: self.viewModel.sourceImage!)
-                            .resizable()
-                            .frame(width: 150.0, height: 150.0)
-                            .scaledToFit()
-                    }.frame(height: 150)
-                }
-                
-            List{
-                ForEach(self.viewModel.modelData, id: \.id) {
-                    model in
-                    HStack {
-                        Text(model.distance)
-                            .padding(10)
-                        Text(model.imageName)
-                        
-                        Image(uiImage: model.image)
-                            .resizable()
-                            .frame(width: 100.0, height: 100.0)
-                            .scaledToFit()
-                    }
-                }
-            }
-                
-            }.navigationBarItems(
-                trailing: Button(action: {
-                    DispatchQueue.global().async {
-                        self.start()
-                    }
-                }, label: { Text("Process") }))
-                .navigationBarTitle(Text("Vision Image Similarity"), displayMode: .inline)
-        }
-        .onAppear {
-            self.getImages()
-        }
-    }
-    
+}
+
+
+extension ContentViewModel {
     func start() {
         let queue = DispatchQueue(label: "test", attributes: .concurrent)
         let groud = DispatchGroup()
         
-        let m1 = self.viewModel.modelData[0..<self.viewModel.modelData.count/3]
-        let m2 = self.viewModel.modelData[self.viewModel.modelData.count/3..<self.viewModel.modelData.count/3*2]
-        let m3 = self.viewModel.modelData[self.viewModel.modelData.count/3*2..<self.viewModel.modelData.count]
+        let m1 = self.modelData[0..<self.modelData.count/3]
+        let m2 = self.modelData[self.modelData.count/3..<self.modelData.count/3*2]
+        let m3 = self.modelData[self.modelData.count/3*2..<self.modelData.count]
         
         var res1 = [ModelData]()
         var res2 = [ModelData]()
@@ -102,26 +101,24 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 res1.append(contentsOf: res2)
                 res1.append(contentsOf: res3)
-                self.viewModel.setModelData(modelData: res1.sorted(by: {Float($0.distance)! < Float($1.distance)!}))
+                self.saveModelData(modelData: res1.sorted(by: {Float($0.distance)! < Float($1.distance)!}))
             }
         }
     }
     
     func processImages(modelData: [ModelData], thread: String) -> [ModelData] {
-        
-        guard self.viewModel.modelData.count > 0 else {
-            return []
-        }
+        guard self.modelData.count > 0 else { return [] }
         
         var observation : VNFeaturePrintObservation?
         var sourceObservation : VNFeaturePrintObservation?
     
-        sourceObservation = featureprintObservationForImage(image: self.viewModel.sourceImage!)
+        sourceObservation = featureprintObservationForImage(image: self.sourceImage!)
         
         var tempData = modelData
         
         tempData = modelData.enumerated().map { (i,m) in
             var model = m
+            print("threa: \(thread) index: \(i)")
             observation = featureprintObservationForImage(image: model.image)
             
             do {
@@ -152,4 +149,3 @@ struct ContentView: View {
         }
     }
 }
-

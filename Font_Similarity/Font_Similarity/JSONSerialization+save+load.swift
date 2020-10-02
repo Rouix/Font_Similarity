@@ -1,8 +1,8 @@
 //
-//  JsonSeroalization+write+load.swift
-//  ImageClassifier
+//  JSONSerialization+save+load.swift
+//  Font_Similarity
 //
-//  Created by Валерия Огородникова on 01.10.2020.
+//  Created by Валерия Огородникова on 02.10.2020.
 //
 
 import Foundation
