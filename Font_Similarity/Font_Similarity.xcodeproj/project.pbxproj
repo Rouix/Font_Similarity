@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A4F0C752535DF75001E0565 /* FontCoverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4F0C742535DF75001E0565 /* FontCoverter.swift */; };
 		3AB1F6C82526FCD9003C060D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1F6C72526FCD9003C060D /* AppDelegate.swift */; };
 		3AB1F6CA2526FCD9003C060D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1F6C92526FCD9003C060D /* SceneDelegate.swift */; };
 		3AB1F6CC2526FCD9003C060D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1F6CB2526FCD9003C060D /* ContentView.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A4F0C742535DF75001E0565 /* FontCoverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontCoverter.swift; sourceTree = "<group>"; };
 		3AB1F6C42526FCD9003C060D /* Font_Similarity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Font_Similarity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AB1F6C72526FCD9003C060D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3AB1F6C92526FCD9003C060D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				3AB1F6D52526FCDA003C060D /* Info.plist */,
 				3AB1F6CF2526FCDA003C060D /* Preview Content */,
 				3AB1F6E42526FD93003C060D /* JSONSerialization+save+load.swift */,
+				3A4F0C742535DF75001E0565 /* FontCoverter.swift */,
 			);
 			path = Font_Similarity;
 			sourceTree = "<group>";
@@ -166,6 +169,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A4F0C752535DF75001E0565 /* FontCoverter.swift in Sources */,
 				3AB1F6E02526FD56003C060D /* FontModel.swift in Sources */,
 				3AB1F6DD2526FD33003C060D /* ContentViewModel.swift in Sources */,
 				3AB1F6C82526FCD9003C060D /* AppDelegate.swift in Sources */,
